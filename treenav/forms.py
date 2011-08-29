@@ -14,6 +14,9 @@ class MenuItemForm(forms.ModelForm):
         required=False,
     )
 
+    # modeltranslation will choke if not explicitly declared..
+   #label = forms.CharField(max_length=255)
+
     class Meta:
         model = MenuItem
 

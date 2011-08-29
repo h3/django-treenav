@@ -1,12 +1,28 @@
+import new
+
+from django.conf import settings
 from django.contrib import admin
-from django import forms
 from django.contrib.contenttypes import generic
+from django import forms
 
 from treenav import models as treenav
 from treenav.forms import MenuItemForm, GenericInlineMenuItemForm
 
+INLINE_PREPOPULATED = {'slug': ('label',)}
 
-class GenericMenuItemInline(generic.GenericStackedInline):
+MenuItemAdmin = admin.ModelAdmin
+GenericStackedInline = generic.GenericStackedInline
+SubMenuItemInlineAdmin = admin.StackedInline
+# SubMenuItemInlineAdmin = admin.TabularInline # defaults, but doesn't play well with grappelli
+
+if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.INSTALLED_APPS:
+    from grappellifit.admin import TranslationAdmin, TranslationGenericStackedInline, TranslationStackedInline, translator
+    INLINE_PREPOPULATED = {}  # broken for inlines :(
+    if translator.is_registred('MenuItem'):
+        MenuItemAdmin = TranslationAdmin
+        SubMenuItemInlineAdmin = TranslationStackedInline
+
+class GenericMenuItemInline(GenericStackedInline):
     """
     Add this inline to your admin class to support editing related menu items
     from that model's admin page.
@@ -17,15 +33,15 @@ class GenericMenuItemInline(generic.GenericStackedInline):
     form = GenericInlineMenuItemForm
 
 
-class SubMenuItemInline(admin.TabularInline):
+class SubMenuItemInline(SubMenuItemInlineAdmin):
     model = treenav.MenuItem
     extra = 1
     form = MenuItemForm
-    prepopulated_fields = {'slug': ('label',)}
+    prepopulated_fields = INLINE_PREPOPULATED
     exclude = ('new_parent',)
 
 
-class MenuItemAdmin(admin.ModelAdmin):
+class MenuItemAdmin(MenuItemAdmin):
     list_display = (
         'menu_items',
         'slug',
