@@ -69,7 +69,7 @@ class MenuItemAdmin(MenuItemAdmin):
                            "supports get_absolute_url()"
         }),
     )
-    list_editable = ('label',)
+    list_editable = ('label', 'order',)
     form = MenuItemForm
     
     def menu_items(self, obj):
