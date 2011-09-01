@@ -65,6 +65,12 @@ on the Test item.
         </li>
     </ul>
 
+The active status of an item is determined with a match agains the value of the link field, which
+can be  a fully qualified URL, an absolute URL, a named URL, a path to a Django view, 
+a regular expression, or a generic relation to a model that supports get_absolute_url()
+
+Note that regular expressions must start with ^ to be evaluated.
+
 
 Single Level Menu
 -----------------
