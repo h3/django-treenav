@@ -40,8 +40,8 @@ class Item(object):
     
     def set_active(self, href):
         active_node = None
-        if (self.node.href.startswith('^') and
-            re.match(self.node.href, href)) or self.node.href == href:
+        if (self.node.link.startswith('^') and
+            re.match(self.node.link, href)) or self.node.href == href:
             self.active = True
             parent = self.parent
             while parent:
