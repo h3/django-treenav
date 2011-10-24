@@ -10,7 +10,7 @@ from mptt.forms import TreeNodeChoiceField
 
 class MenuItemForm(forms.ModelForm):
     new_parent = TreeNodeChoiceField(
-        queryset=MenuItem.tree.all(),
+        queryset=MenuItem.objects.all(),
         required=False,
     )
 
@@ -97,7 +97,7 @@ class MenuItemForm(forms.ModelForm):
 
 class GenericInlineMenuItemForm(forms.ModelForm):
     parent = TreeNodeChoiceField(
-        queryset=MenuItem.tree.all()
+        queryset=MenuItem.objects.all()
     )
     class Meta:
         model = MenuItem
