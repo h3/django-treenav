@@ -50,6 +50,8 @@ class MenuItemAdmin(MenuItemAdmin):
         'link',
         'href_link',
         'order',
+        'lft', 
+        'rght',
         'is_enabled',
     )
     list_filter = ('parent', 'is_enabled')

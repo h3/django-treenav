@@ -1,6 +1,7 @@
 import re
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -13,6 +14,7 @@ from django.db.models.query import QuerySet
 import mptt
 from mptt.utils import previous_current_next
 
+ORDER_CHOICES = getattr(settings, 'TREENAV_ORDER_CHOICES', 20)
 
 class Item(object):
     def __init__(self, node):
@@ -91,18 +93,6 @@ class MenuItemManager(models.Manager):
 
     
 class MenuItem(models.Model):
-    ORDER_CHOICES = (
-        (0, 0),
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-        (6, 6),
-        (7, 7),
-        (8, 8),
-        (9, 9),
-    )
     
     parent = models.ForeignKey(
         'MenuItem',
@@ -123,7 +113,7 @@ class MenuItem(models.Model):
     )
     order = models.IntegerField(
         _('order'),
-        choices=ORDER_CHOICES,
+        choices=[(x, x) for x in range(0, ORDER_CHOICES)],
     )
     is_enabled = models.BooleanField(default=True)
     link = models.CharField(
