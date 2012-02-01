@@ -24,6 +24,12 @@ if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.
         MenuItemAdmin = TranslationAdmin
         SubMenuItemInlineAdmin = TranslationStackedInline
 
+if 'grappellifit' in settings.INSTALLED_APPS:
+    CHANGE_LIST_TEMPLATE = 'admin/treenav/menuitem/mptt_change_list.html'
+else:
+    CHANGE_LIST_TEMPLATE = 'admin/mptt_change_list.html'
+
+
 class GenericMenuItemInline(GenericStackedInline):
     """
     Add this inline to your admin class to support editing related menu items
@@ -54,6 +60,7 @@ class MenuItemAdmin(MPTTModelAdmin):
         'rght',
         'is_enabled',
     )
+    change_list_template = CHANGE_LIST_TEMPLATE    
     list_filter = ('parent', 'is_enabled')
     prepopulated_fields = {'slug': ('label',)}
     inlines = (SubMenuItemInline,)
