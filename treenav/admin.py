@@ -5,6 +5,8 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django import forms
 
+from mptt.admin import MPTTModelAdmin
+
 from treenav import models as treenav
 from treenav.forms import MenuItemForm, GenericInlineMenuItemForm
 
@@ -38,12 +40,10 @@ class SubMenuItemInline(SubMenuItemInlineAdmin):
     extra = 1
     form = MenuItemForm
     prepopulated_fields = INLINE_PREPOPULATED
-    exclude = ('new_parent',)
 
 
-class MenuItemAdmin(MenuItemAdmin):
+class MenuItemAdmin(MPTTModelAdmin):
     list_display = (
-        'menu_items',
         'slug',
         'label',
         'parent',
@@ -55,12 +55,11 @@ class MenuItemAdmin(MenuItemAdmin):
         'is_enabled',
     )
     list_filter = ('parent', 'is_enabled')
-    raw_id_fields = ('parent',)
     prepopulated_fields = {'slug': ('label',)}
-    inlines = (SubMenuItemInline, )
+    inlines = (SubMenuItemInline,)
     fieldsets = (
         (None, {
-            'fields': ('new_parent', 'label', 'slug', 'order', 'is_enabled')
+            'fields': ('parent', 'label', 'slug', 'order', 'is_enabled')
         }),
         ('URL', {
             'fields': ('link', ('content_type', 'object_id')),
@@ -73,12 +72,6 @@ class MenuItemAdmin(MenuItemAdmin):
     )
     list_editable = ('label', 'order',)
     form = MenuItemForm
-    
-    def menu_items(self, obj):
-        if obj.level == 0:
-            return obj.label
-        return '&nbsp;&nbsp;&nbsp;'*obj.level + '- %s' % obj.label
-    menu_items.allow_tags = True
     
     def href_link(self, obj):
         return '<a href="%s">%s</a>' % (obj.href, obj.href)

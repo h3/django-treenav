@@ -93,7 +93,6 @@ class MenuItemManager(models.Manager):
 
     
 class MenuItem(models.Model):
-    
     parent = models.ForeignKey(
         'MenuItem',
         related_name='children',
