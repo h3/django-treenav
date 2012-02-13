@@ -29,7 +29,7 @@ if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.
     if translator.is_registred('MenuItem'):
         #MenuItemAdmin = TranslationAdmin
         #SubMenuItemInlineAdmin = TranslationStackedInline
-        class ToSubClass(MPTTModelAdmin, TranslationAdmin): pass
+        class ToSubClass(TranslationAdmin, MPTTModelAdmin): pass
     else:
         class ToSubClass(MPTTModelAdmin): pass
 else:
@@ -73,7 +73,7 @@ class MenuItemAdmin(ToSubClass):
     )
     change_list_template = CHANGE_LIST_TEMPLATE    
     list_filter = ('parent', 'is_enabled')
-    prepopulated_fields = {'slug': ('label_en',)}
+    prepopulated_fields = {'slug': ('label',)}
     inlines = (SubMenuItemInline,)
     fieldsets = (
         (None, {
