@@ -1,4 +1,4 @@
-import new
+#import new
 
 from django.conf import settings
 from django.contrib import admin
@@ -17,12 +17,23 @@ GenericStackedInline = generic.GenericStackedInline
 SubMenuItemInlineAdmin = admin.StackedInline
 # SubMenuItemInlineAdmin = admin.TabularInline # defaults, but doesn't play well with grappelli
 
+#if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.INSTALLED_APPS:
+#    from grappellifit.admin import TranslationAdmin, TranslationGenericStackedInline, TranslationStackedInline, translator
+#    INLINE_PREPOPULATED = {}  # broken for inlines :(
+#    if translator.is_registred('MenuItem'):
+#        MenuItemAdmin = TranslationAdmin
+#        SubMenuItemInlineAdmin = TranslationStackedInline
 if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.INSTALLED_APPS:
     from grappellifit.admin import TranslationAdmin, TranslationGenericStackedInline, TranslationStackedInline, translator
     INLINE_PREPOPULATED = {}  # broken for inlines :(
     if translator.is_registred('MenuItem'):
-        MenuItemAdmin = TranslationAdmin
-        SubMenuItemInlineAdmin = TranslationStackedInline
+        #MenuItemAdmin = TranslationAdmin
+        #SubMenuItemInlineAdmin = TranslationStackedInline
+        class ToSubClass(MPTTModelAdmin, TranslationAdmin): pass
+    else:
+        class ToSubClass(MPTTModelAdmin): pass
+else:
+    class ToSubClass(MPTTModelAdmin): pass
 
 if 'grappellifit' in settings.INSTALLED_APPS:
     CHANGE_LIST_TEMPLATE = 'admin/treenav/menuitem/mptt_change_list.html'
@@ -48,7 +59,7 @@ class SubMenuItemInline(SubMenuItemInlineAdmin):
     prepopulated_fields = INLINE_PREPOPULATED
 
 
-class MenuItemAdmin(MPTTModelAdmin):
+class MenuItemAdmin(ToSubClass):
     list_display = (
         'slug',
         'label',
@@ -62,7 +73,7 @@ class MenuItemAdmin(MPTTModelAdmin):
     )
     change_list_template = CHANGE_LIST_TEMPLATE    
     list_filter = ('parent', 'is_enabled')
-    prepopulated_fields = {'slug': ('label',)}
+    prepopulated_fields = {'slug': ('label_en',)}
     inlines = (SubMenuItemInline,)
     fieldsets = (
         (None, {
