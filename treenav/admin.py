@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.contenttypes import generic
-from django import forms
 
 from mptt.admin import MPTTModelAdmin
 
@@ -12,33 +11,24 @@ from treenav.forms import MenuItemForm, GenericInlineMenuItemForm
 
 INLINE_PREPOPULATED = {'slug': ('label',)}
 
-MenuItemAdmin = admin.ModelAdmin
-GenericStackedInline = generic.GenericStackedInline
-SubMenuItemInlineAdmin = admin.StackedInline
-# SubMenuItemInlineAdmin = admin.TabularInline # defaults, but doesn't play well with grappelli
-
-#if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.INSTALLED_APPS:
-#    from grappellifit.admin import TranslationAdmin, TranslationGenericStackedInline, TranslationStackedInline, translator
-#    INLINE_PREPOPULATED = {}  # broken for inlines :(
-#    if translator.is_registred('MenuItem'):
-#        MenuItemAdmin = TranslationAdmin
-#        SubMenuItemInlineAdmin = TranslationStackedInline
-if 'grappellifit' in settings.INSTALLED_APPS and 'modeltranslation' in settings.INSTALLED_APPS:
-    from grappellifit.admin import TranslationAdmin, TranslationGenericStackedInline, TranslationStackedInline, translator
-    INLINE_PREPOPULATED = {}  # broken for inlines :(
-    if translator.is_registred('MenuItem'):
-        #MenuItemAdmin = TranslationAdmin
-        #SubMenuItemInlineAdmin = TranslationStackedInline
-        class ToSubClass(TranslationAdmin, MPTTModelAdmin): pass
-    else:
-        class ToSubClass(MPTTModelAdmin): pass
-else:
-    class ToSubClass(MPTTModelAdmin): pass
-
-if 'grappellifit' in settings.INSTALLED_APPS:
-    CHANGE_LIST_TEMPLATE = 'admin/treenav/menuitem/mptt_change_list.html'
-else:
+if 'grappellifit' not in settings.INSTALLED_APPS:
     CHANGE_LIST_TEMPLATE = 'admin/mptt_change_list.html'
+    SubMenuItemInlineAdmin = admin.StackedInline
+    GenericStackedInline = generic.GenericStackedInline
+    class ToSubClass(MPTTModelAdmin): pass
+else:
+    CHANGE_LIST_TEMPLATE = 'admin/treenav/menuitem/mptt_change_list.html'
+    if 'modeltranslation' in settings.INSTALLED_APPS:
+        from grappellifit.admin import TranslationAdmin, TranslationGenericStackedInline, TranslationStackedInline, translator
+        INLINE_PREPOPULATED = {}  # broken for inlines :(
+        if translator.is_registred('MenuItem'):
+            SubMenuItemInlineAdmin = TranslationStackedInline
+            GenericStackedInline = TranslationGenericStackedInline
+            class ToSubClass(TranslationAdmin, MPTTModelAdmin): pass
+        else:
+            SubMenuItemInlineAdmin = admin.StackedInline
+            GenericStackedInline = generic.GenericStackedInline
+            class ToSubClass(MPTTModelAdmin): pass
 
 
 class GenericMenuItemInline(GenericStackedInline):
