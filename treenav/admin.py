@@ -11,11 +11,12 @@ from treenav.forms import MenuItemForm, GenericInlineMenuItemForm
 
 INLINE_PREPOPULATED = {'slug': ('label',)}
 
+class ToSubClass(MPTTModelAdmin): pass
+SubMenuItemInlineAdmin = admin.StackedInline
+GenericStackedInline = generic.GenericStackedInline
+
 if 'grappellifit' not in settings.INSTALLED_APPS:
     CHANGE_LIST_TEMPLATE = 'admin/mptt_change_list.html'
-    SubMenuItemInlineAdmin = admin.StackedInline
-    GenericStackedInline = generic.GenericStackedInline
-    class ToSubClass(MPTTModelAdmin): pass
 else:
     CHANGE_LIST_TEMPLATE = 'admin/treenav/menuitem/mptt_change_list.html'
     if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -28,10 +29,9 @@ else:
         else:
             SubMenuItemInlineAdmin = admin.StackedInline
             GenericStackedInline = generic.GenericStackedInline
-            class ToSubClass(MPTTModelAdmin): pass
 
 
-class GenericMenuItemInline(GenericStackedInline):
+class GenericMenuItemInline(generic.GenericStackedInline):
     """
     Add this inline to your admin class to support editing related menu items
     from that model's admin page.
